@@ -2,12 +2,12 @@ package server
 
 import (
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/samertm/samerhttp/form"
+	"github.com/samertm/samerhttp/session"
 )
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +17,11 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		err = t.Execute(w, struct{ Thing string }{Thing: "yo"})
+		v, ok := s.Get("onesession")
+		if !ok {
+			v = struct{ Thing string }{Thing: "________"}
+		}
+		err = t.Execute(w, v)
 		if err != nil {
 			log.Print(err)
 		}
@@ -26,13 +30,17 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func handleThingChange(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		_, err := form.Parse(r, "thing")
+		f, err := form.Parse(r, "thing")
 		if err != nil {
 			log.Print(err)
 			return
 		}
+		s.Set("onesession", struct{ Thing string }{Thing: f["thing"][0]})
 	}
 }
+
+// TODO deal with more than one sesion
+var s = session.New()
 
 func ListenAndServe(ip string) {
 	r := mux.NewRouter()
