@@ -61,7 +61,8 @@ func ListenAndServe(ip, prefix string) {
 	r.HandleFunc(prefix+"/", handleIndex)
 	r.HandleFunc(prefix+"/thing/change", handleThingChange)
 	r.PathPrefix(prefix + "/").Handler(http.FileServer(http.Dir("./static/")))
-	http.Handle(prefix+"/", r)
+	// I don't think I need to append prefix to the front of "/"
+	http.Handle("/", r)
 	err := http.ListenAndServe(ip, nil)
 	if err != nil {
 		log.Print(err)
