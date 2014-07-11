@@ -60,7 +60,8 @@ func ListenAndServe(ip, prefix string) {
 	r := mux.NewRouter()
 	r.HandleFunc(prefix+"/", handleIndex)
 	r.HandleFunc(prefix+"/thing/change", handleThingChange)
-	r.PathPrefix(prefix + "/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix(prefix + "/").Handler(
+		http.StripPrefix(prefix+"/", http.FileServer(http.Dir("./static/"))))
 	// I don't think I need to append prefix to the front of "/"
 	http.Handle("/", r)
 	err := http.ListenAndServe(ip, nil)
