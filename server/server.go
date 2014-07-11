@@ -56,12 +56,12 @@ func handleThingChange(w http.ResponseWriter, r *http.Request) {
 var s = session.New()
 var defaultThingStruct = struct{ Thing string }{Thing: "________"}
 
-func ListenAndServe(ip string) {
+func ListenAndServe(ip, prefix string) {
 	r := mux.NewRouter()
-	r.HandleFunc("/", handleIndex)
-	r.HandleFunc("/thing/change", handleThingChange)
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	http.Handle("/", r)
+	r.HandleFunc(prefix+"/", handleIndex)
+	r.HandleFunc(prefix+"/thing/change", handleThingChange)
+	r.PathPrefix(prefix + "/").Handler(http.FileServer(http.Dir("./static/")))
+	http.Handle(prefix+"/", r)
 	err := http.ListenAndServe(ip, nil)
 	if err != nil {
 		log.Print(err)

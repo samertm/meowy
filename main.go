@@ -10,8 +10,12 @@ import (
 func main() {
 	host := flag.String("host", "localhost", "sets the host name.")
 	port := flag.String("port", "5849", "sets the port.")
+	prefix := flag.String("prefix", "", "sets prefix (for if meowy listens on a path that isn't \"/\"")
 	flag.Parse()
 	ip := *host + ":" + *port
 	fmt.Println("listening on", ip)
-	server.ListenAndServe(ip)
+	if *prefix != "" {
+		fmt.Println("with prefix", *prefix)
+	}
+	server.ListenAndServe(ip, *prefix)
 }
