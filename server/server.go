@@ -29,7 +29,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 				v = defaultThingStruct
 			}
 		}
-		err = t.Execute(w, v.(struct{Thing string}))
+		err = t.Execute(w, v.(struct{ Thing string }))
 		if err != nil {
 			log.Print(err)
 		}
