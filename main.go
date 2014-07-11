@@ -16,6 +16,14 @@ func main() {
 	fmt.Println("listening on", ip)
 	if *prefix != "" {
 		fmt.Println("with prefix", *prefix)
+		var front, back string
+		if (*prefix)[0] != '/' {
+			front = "/"
+		}
+		if (*prefix)[len(*prefix)-1] != '/' {
+			back = "/"
+		}
+		*prefix = front + *prefix + back
 	}
 	server.ListenAndServe(ip, *prefix)
 }
