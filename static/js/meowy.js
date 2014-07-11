@@ -15,9 +15,10 @@ $("#work").submit(function(e) {
         $("#err").text("error: field blank");
         return;
     }
+    getSession(); // creates sessionid cookie if it doesn't exist
     var toSend = $(this).serialize();
     $.ajax({
-        url: "/thing/change",
+        url: "thing/change",
         type: "POST",
         data: toSend,
         success: function() {
