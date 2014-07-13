@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/samertm/samerhttp/form"
@@ -48,13 +49,26 @@ func handleThingChange(w http.ResponseWriter, r *http.Request) {
 			log.Println("No cookie set")
 			return
 		}
-		s.Set(c.Value, struct{ Thing string }{Thing: f["thing"][0]})
+		s.Set(c.Value, struct{ Thing string }{Thing: replaceInput(f["thing"][0])})
 	}
 }
 
 // TODO deal with more than one sesion
 var s = session.New()
 var defaultThingStruct = struct{ Thing string }{Thing: "________"}
+
+// TODO refactor into 'engine' package
+// TODO find more replacements? ask amber
+var replacements = map[string]string{
+	"my": "your",
+}
+
+func replaceInput(s string) string {
+	for old, new := range replacements {
+		s = strings.Replace(s, new, old, -1)
+	}
+	return s
+}
 
 func ListenAndServe(ip, prefix string) {
 	r := mux.NewRouter()
