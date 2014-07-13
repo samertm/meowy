@@ -65,7 +65,7 @@ var replacements = map[string]string{
 
 func replaceInput(s string) string {
 	for old, new := range replacements {
-		s = strings.Replace(s, new, old, -1)
+		s = strings.Replace(s, old, new, -1)
 	}
 	return s
 }
