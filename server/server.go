@@ -18,18 +18,10 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		c, err := r.Cookie("sessionid")
-		// TODO look into the structure of this?
-		var v interface{}
-		if err != nil {
+		v, ok := s.CookieGet(r)
+		if !ok {
 			v = defaultThingStruct
-		} else {
-			var ok bool // declare here so we don't shadow 'v'
-			v, ok = s.Get(c.Value)
-			if !ok {
-				v = defaultThingStruct
-			}
-		}
+		}		
 		err = t.Execute(w, v.(struct{ Thing string }))
 		if err != nil {
 			log.Print(err)
@@ -44,12 +36,7 @@ func handleThingChange(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		c, err := r.Cookie("sessionid")
-		if err != nil {
-			log.Println("No cookie set")
-			return
-		}
-		s.Set(c.Value, struct{ Thing string }{Thing: replaceInput(f["thing"][0])})
+		s.CookieSet(r, struct{ Thing string }{Thing: replaceInput(f["thing"][0])})
 	}
 }
 
