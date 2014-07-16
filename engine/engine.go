@@ -48,6 +48,3 @@ func (p *Person) Rest() []string {
 	}
 	return p.Things[1:]
 }
-
-// Modifying PlaceholderPerson is illegal
-var PlaceholderPerson = &Person{}

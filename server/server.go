@@ -23,7 +23,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		}
 		v, ok := s.CookieGet(r)
 		if !ok {
-			v = engine.PlaceholderPerson
+			v = &engine.Person{}
 		}
 		err = t.Execute(w, v.(*engine.Person))
 		if err != nil {
