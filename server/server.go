@@ -4,13 +4,16 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/samertm/meowy/engine"
 	"github.com/samertm/samerhttp/form"
 	"github.com/samertm/samerhttp/session"
 )
 
+// Currently assigns a new Person to every session. I'm not sure if
+// I should only create new Person types when the user submits a
+// change request.
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, err := template.ParseFiles("templates/index.html")
@@ -20,9 +23,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		}
 		v, ok := s.CookieGet(r)
 		if !ok {
-			v = defaultThingStruct
-		}		
-		err = t.Execute(w, v.(struct{ Thing string }))
+			v = engine.PlaceholderPerson
+		}
+		err = t.Execute(w, v.(*engine.Person))
 		if err != nil {
 			log.Print(err)
 		}
@@ -36,26 +39,21 @@ func handleThingChange(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		s.CookieSet(r, struct{ Thing string }{Thing: replaceInput(f["thing"][0])})
+		v, ok := s.CookieGet(r)
+		if !ok {
+			v = engine.NewPerson()
+			s.CookieSet(r, v)
+		}
+		p, ok := v.(*engine.Person)
+		if !ok {
+			log.Println("Didn't store a person D:")
+		}
+		p.AddThing(f["thing"][0])
 	}
 }
 
-// TODO deal with more than one sesion
 var s = session.New()
 var defaultThingStruct = struct{ Thing string }{Thing: "________"}
-
-// TODO refactor into 'engine' package
-// TODO find more replacements? ask amber
-var replacements = map[string]string{
-	"my": "your",
-}
-
-func replaceInput(s string) string {
-	for old, new := range replacements {
-		s = strings.Replace(s, old, new, -1)
-	}
-	return s
-}
 
 func ListenAndServe(ip, prefix string) {
 	r := mux.NewRouter()
