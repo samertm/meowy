@@ -32,5 +32,22 @@ func (p *Person) AddThing(t string) {
 	p.Things = append([]string{t}, p.Things...)
 }
 
+// For template processing, we need to define the following methods:
+// TopPriority and Rest. Then can then be used in the template as
+// {{ .TopPriority }} and {{ range .Rest }}
+func (p *Person) TopPriority() string {
+	if len(p.Things) == 0 {
+		return "________"
+	}
+	return p.Things[0]
+}
+
+func (p *Person) Rest() []string {
+	if len(p.Things) < 2 {
+		return nil
+	}
+	return p.Things[1:]
+}
+
 // Modifying PlaceholderPerson is illegal
-var PlaceholderPerson = &Person{Things: []string{"________"}}
+var PlaceholderPerson = &Person{}
