@@ -2,7 +2,11 @@
 // to represent people and things that people want to do
 package engine
 
-import "strings"
+import (
+	"errors"
+	"log"
+	"regexp"
+)
 
 // TODO better name than 'person'?
 type Person struct {
@@ -11,13 +15,27 @@ type Person struct {
 
 // TODO find more replacements? ask amber
 var replacements = map[string]string{
-	"my": "your",
+	"my":        "your",
+	"I":         "you",
+	"me":        "you",
+	"mine":      "yours",
+	"myself":    "yourself",
+	"we":        "you",
+	"us":        "you all",
+	"ourselves": "yourselves",
+	"our":       "your",
+	"ours":      "yours",
 }
 
 // TODO name this better
 func replaceInput(s string) string {
 	for old, new := range replacements {
-		s = strings.Replace(s, old, new, -1)
+		re, err := regexp.Compile("(^|\\W)" + old + "(\\W|$)")
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+		s = re.ReplaceAllString(s, "${1}"+new+"${2}")
 	}
 	return s
 }
@@ -29,8 +47,13 @@ func NewPerson() *Person {
 }
 
 // Pushes t to the front of Person.Things
-func (p *Person) AddThing(t string) {
-	p.Things = append([]string{replaceInput(t)}, p.Things...)
+func (p *Person) AddThing(t string) error {
+	replaced := replaceInput(t)
+	if replaced == "" {
+		return errors.New("Bad input ):")
+	}
+	p.Things = append([]string{replaced}, p.Things...)
+	return nil
 }
 
 // For template processing, we need to define the following methods:
