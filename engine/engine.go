@@ -14,6 +14,7 @@ var replacements = map[string]string{
 	"my": "your",
 }
 
+// TODO name this better
 func replaceInput(s string) string {
 	for old, new := range replacements {
 		s = strings.Replace(s, old, new, -1)
@@ -29,7 +30,7 @@ func NewPerson() *Person {
 
 // Pushes t to the front of Person.Things
 func (p *Person) AddThing(t string) {
-	p.Things = append([]string{t}, p.Things...)
+	p.Things = append([]string{replaceInput(t)}, p.Things...)
 }
 
 // For template processing, we need to define the following methods:
