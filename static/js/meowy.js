@@ -40,31 +40,43 @@ $("button.promote").each(function(i) {
 });
 
 $("button").click(function() {
+    var toSend = ""
+    var url = ""
     if ($(this).hasClass("delete")) {
-        var toSend = "delete=" + $(this).attr("num")
-        $.ajax({
-            url: "thing/delete",
-            type: "POST",
-            data: toSend,
-            success: function() {
-                location.reload(true);
-            },
-            error: function() {
-                console.error("errored on ajax request");
-            }
-        });
+        toSend = "delete=" + $(this).attr("num");
+        url = "thing/delete";
     } else if ($(this).hasClass("promote")) {
-        var toSend = "promote=" + $(this).attr("num")
-        $.ajax({
-            url: "thing/promote",
-            type: "POST",
-            data: toSend,
-            success: function() {
-                location.reload(true);
-            },
-            error: function() {
-                console.error("errored on ajax request");
-            }
-        });
+        toSend = "promote=" + $(this).attr("num");
+        url = "thing/promote";
+    } else if ($(this).hasClass("adddata")) {
+        
+        // toSend = "id=" + $(this).attr("num");
+        //     "data=" + $(this).attr("data");
+        // url = "thing/adddata";
+    } else if (toSend == "" || url == "") {
+        return;
     }
+    sendData(url, toSend);
+});
+
+// reloads on successful send
+function sendData(url, toSend) {
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: toSend,
+        success: function() {
+            location.reload(true);
+        },
+        error: function() {
+            console.error("errored on ajax request");
+        }
+    });
+}
+
+// turn all links into hyperlinks
+$(".thing").each(function() {
+    re = new RegExp("(https?://[^ \n!]+)")
+    newText = $(this).html().replace(re, "<a href='$1'>$1</a>")
+    $(this).html(newText)
 });
