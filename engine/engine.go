@@ -48,3 +48,25 @@ func (p *Person) Rest() []string {
 	}
 	return p.Things[1:]
 }
+
+func (p *Person) Delete(i int) {
+	if len(p.Things) == 0 || i < 0 || i >= len(p.Things) {
+		// this shouldn't happen
+		return
+	}
+	if i == len(p.Things)-1 {
+		p.Things = p.Things[:i]
+		return
+	}
+	p.Things = append(p.Things[:i], p.Things[i+1:]...)
+}
+
+func (p *Person) Promote(i int) {
+	if len(p.Things) == 0 || i < 0 || i >= len(p.Things) {
+		// this shouldn't happen
+		return
+	}
+	t := p.Things[i]
+	p.Delete(i)
+	p.Things = append([]string{t}, p.Things...)
+}

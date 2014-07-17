@@ -1,9 +1,11 @@
 package server
 
 import (
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/samertm/meowy/engine"
@@ -52,6 +54,61 @@ func handleThingChange(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleThingDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		f, err := form.Parse(r, "delete")
+		if err != nil {
+			log.Print(err)
+			return
+		}
+		err = withPerson(r, func(e *engine.Person) {
+			i, err := strconv.Atoi(f["delete"][0])
+			if err != nil {
+				log.Print("expected an int")
+				return
+			}
+			e.Delete(i)
+		})
+		if err != nil {
+			log.Print(err)
+		}
+	}
+}
+
+func handleThingPromote(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		f, err := form.Parse(r, "promote")
+		if err != nil {
+			log.Print(err)
+			return
+		}
+		err = withPerson(r, func(e *engine.Person) {
+			i, err := strconv.Atoi(f["promote"][0])
+			if err != nil {
+				log.Print("expected an int")
+				return
+			}
+			e.Promote(i)
+		})
+		if err != nil {
+			log.Print(err)
+		}
+	}
+}
+
+func withPerson(r *http.Request, fn func(*engine.Person)) error {
+	v, ok := s.CookieGet(r)
+	if !ok {
+		return errors.New("auth cookie not set")
+	}
+	p, ok := v.(*engine.Person)
+	if !ok {
+		return errors.New("cookie set to invalid type")
+	}
+	fn(p)
+	return nil
+}
+
 var s = session.New()
 var defaultThingStruct = struct{ Thing string }{Thing: "________"}
 
@@ -59,6 +116,8 @@ func ListenAndServe(ip, prefix string) {
 	r := mux.NewRouter()
 	r.HandleFunc(prefix+"/", handleIndex)
 	r.HandleFunc(prefix+"/thing/change", handleThingChange)
+	r.HandleFunc(prefix+"/thing/delete", handleThingDelete)
+	r.HandleFunc(prefix+"/thing/promote", handleThingPromote)
 	r.PathPrefix(prefix + "/").Handler(
 		http.StripPrefix(prefix+"/", http.FileServer(http.Dir("./static/"))))
 	// I don't think I need to append prefix to the front of "/"

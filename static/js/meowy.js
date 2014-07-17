@@ -29,3 +29,40 @@ $("#work").submit(function(e) {
         }
     });
 });
+
+$(".thing").each(function(i) {
+    $(this).append("<button num=" + i + " class='delete'>x</button>");
+    if (i != 0) {
+        $(this).append("<button num=" + i + " class='promote'>promote</button>");
+    }
+});
+
+$("button").click(function() {
+    if ($(this).hasClass("delete")) {
+        var toSend = "delete=" + $(this).attr("num")
+        $.ajax({
+            url: "thing/delete",
+            type: "POST",
+            data: toSend,
+            success: function() {
+                location.reload(true);
+            },
+            error: function() {
+                console.error("errored on ajax request");
+            }
+        });
+    } else if ($(this).hasClass("promote")) {
+        var toSend = "promote=" + $(this).attr("num")
+        $.ajax({
+            url: "thing/promote",
+            type: "POST",
+            data: toSend,
+            success: function() {
+                location.reload(true);
+            },
+            error: function() {
+                console.error("errored on ajax request");
+            }
+        });
+    }
+});
