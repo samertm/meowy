@@ -90,7 +90,7 @@ func (p *Person) Promote(i int) {
 		// this shouldn't happen
 		return
 	}
-	t := p.Things[i]
-	p.Delete(i)
-	p.Things = append([]string{t}, p.Things...)
+	front := p.Things[0]
+	p.Things[0] = p.Things[i]
+	p.Things[i] = front
 }

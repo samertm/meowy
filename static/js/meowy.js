@@ -30,6 +30,11 @@ $("#work").submit(function(e) {
     });
 });
 
+$("button.adddata").each(function(i) {
+    $(this).attr("num", i)
+});
+
+
 $("button.delete").each(function(i) {
     $(this).attr("num", i)
 });

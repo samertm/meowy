@@ -4,8 +4,8 @@
     <title>meowy</title>
   </head>
   <body>
-    {{ with .TopPriority }} <p class="thing">hey! you should {{.}}!<button class="delete">x</button></p> {{ end }}
-    {{ range .Rest }} <p class="thing">{{.}}<button class="delete">x</button><button class="promote">promote</button></p> {{ end }}
+    {{ with .TopPriority }} <p class="thing">hey! you should {{.}}! <button class="adddata">add data</button><button class="delete">x</button></p> {{ end }}
+    {{ range .Rest }} <p class="thing">{{.}} <button class="adddata">add data</button><button class="delete">x</button><button class="promote">promote</button></p> {{ end }}
     <form id="work">
       <p>I want to: <input type="text" name="thing"> <input type="submit" value="submit"><div id="err"></div></p>
       <p>hint: write yourself a directive statement (e.g. I want to: write a literate program -> you should write a literate program!)</p>
