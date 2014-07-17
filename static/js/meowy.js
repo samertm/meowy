@@ -30,11 +30,13 @@ $("#work").submit(function(e) {
     });
 });
 
-$(".thing").each(function(i) {
-    $(this).append("<button num=" + i + " class='delete'>x</button>");
-    if (i != 0) {
-        $(this).append("<button num=" + i + " class='promote'>promote</button>");
-    }
+$("button.delete").each(function(i) {
+    $(this).attr("num", i)
+});
+
+$("button.promote").each(function(i) {
+    $(this).attr("num", i+1) // i+1 because there is no promote button for the first value
+    console.log(this)
 });
 
 $("button").click(function() {
