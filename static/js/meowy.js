@@ -30,6 +30,34 @@ $("#work").submit(function(e) {
     });
 });
 
+// turn all links into hyperlinks
+$(".thing").each(function() {
+    re = new RegExp("(https?://[^ \n!]+)")
+    newText = $(this).html().replace(re, "<a href='$1'>$1</a>")
+    $(this).html(newText)
+});
+
+$("button").click(function() {
+    var toSend = "";
+    var url = "";
+    if ($(this).hasClass("delete")) {
+        toSend = "delete=" + $(this).attr("num");
+        url = "thing/delete";
+    } else if ($(this).hasClass("promote")) {
+        toSend = "promote=" + $(this).attr("num");
+        url = "thing/promote";
+    } else if ($(this).hasClass("adddata")) {
+        // toSend = "id=" + $(this).attr("num");
+        //     "data=" + $(this).attr("data");
+        // url = "thing/adddata";
+    } else if (toSend == "" || url == "") {
+        console.log("OH NO")
+        return;
+    }
+    console.log(toSend);
+    sendData(url, toSend);
+});
+
 $("button.adddata").each(function(i) {
     $(this).attr("num", i)
 });
@@ -41,28 +69,8 @@ $("button.delete").each(function(i) {
 
 $("button.promote").each(function(i) {
     $(this).attr("num", i+1) // i+1 because there is no promote button for the first value
-    console.log(this)
 });
 
-$("button").click(function() {
-    var toSend = ""
-    var url = ""
-    if ($(this).hasClass("delete")) {
-        toSend = "delete=" + $(this).attr("num");
-        url = "thing/delete";
-    } else if ($(this).hasClass("promote")) {
-        toSend = "promote=" + $(this).attr("num");
-        url = "thing/promote";
-    } else if ($(this).hasClass("adddata")) {
-        
-        // toSend = "id=" + $(this).attr("num");
-        //     "data=" + $(this).attr("data");
-        // url = "thing/adddata";
-    } else if (toSend == "" || url == "") {
-        return;
-    }
-    sendData(url, toSend);
-});
 
 // reloads on successful send
 function sendData(url, toSend) {
@@ -79,9 +87,3 @@ function sendData(url, toSend) {
     });
 }
 
-// turn all links into hyperlinks
-$(".thing").each(function() {
-    re = new RegExp("(https?://[^ \n!]+)")
-    newText = $(this).html().replace(re, "<a href='$1'>$1</a>")
-    $(this).html(newText)
-});
